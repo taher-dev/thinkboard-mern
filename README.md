@@ -2,6 +2,10 @@
 
 A modern, full-stack note-taking application built with the MERN stack (MongoDB, Express, React, Node.js). 
 
+**[Live Demo](https://thinkboard-mern-t87j.onrender.com)** (Hosted on Render)
+
+![ThinkBoard Thumbnail](./frontend/src/assets/thinkboard-thumbnail.png)
+
 ## 🚀 Features
 
 - **Create, Read, Update, Delete (CRUD) Notes:** Fully functional note management.
