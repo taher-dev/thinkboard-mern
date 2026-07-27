@@ -1,5 +1,6 @@
 import express from "express";
 import notesRoutes from "./routes/notesRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.json()); // parse the JSON body, req.body
 app.use(rateLimiter);
 
+app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
 
 if (process.env.NODE_ENV === "production") {

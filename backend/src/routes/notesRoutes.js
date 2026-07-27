@@ -6,8 +6,12 @@ import {
   updateNote,
   deleteNote,
 } from "../controllers/notesController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+// Apply auth middleware to all notes routes
+router.use(protect);
 
 router.get("/", getAllNotes);
 router.get("/:id", getNoteById);
