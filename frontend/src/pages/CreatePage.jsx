@@ -59,6 +59,7 @@ const CreatePage = () => {
       showHeading={true}
       formData={formData}
       setFormData={setFormData}
+      isDirty={Boolean(formData.title.trim() || formData.content.trim())}
       loading={loading}
       onSubmit={handleSubmit}
       onCancel={handleCancel}

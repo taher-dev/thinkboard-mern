@@ -132,6 +132,7 @@ const NoteDetailPage = () => {
       showHeading={false}
       formData={formData}
       setFormData={setFormData}
+      isDirty={hasChanges()}
       loading={loading}
       onSubmit={handleSubmit}
       onCancel={handleCancel}

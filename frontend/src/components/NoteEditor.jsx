@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
@@ -10,6 +10,7 @@ const NoteEditor = ({
   loading,
   onSubmit,
   onCancel,
+  isDirty,
   submitText = "Save",
   submitLoadingText = "Saving...",
   submitIcon: SubmitIcon,
@@ -32,12 +33,23 @@ const NoteEditor = ({
     adjustTextareaHeight();
   }, [formData.content]);
 
+  const handleCancel = useCallback(() => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      navigate("/");
+    }
+  }, [onCancel, navigate]);
+
+  const hasUnsaved =
+    isDirty !== undefined
+      ? isDirty
+      : Boolean(formData.title.trim() || formData.content.trim());
+
   // Warn before refreshing/closing tab
   useEffect(() => {
-    const hasUnsavedChanges = formData.title.trim() || formData.content.trim();
-
     const handleBeforeUnload = (e) => {
-      if (!hasUnsavedChanges) return;
+      if (!hasUnsaved) return;
 
       e.preventDefault();
       e.returnValue = "";
@@ -46,19 +58,11 @@ const NoteEditor = ({
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData]);
+  }, [hasUnsaved]);
 
   useEffect(() => {
     titleRef.current?.focus();
   }, []);
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
-      navigate("/");
-    }
-  };
 
   const handleKeyDown = (e) => {
     if (
@@ -87,7 +91,7 @@ const NoteEditor = ({
     window.addEventListener("keydown", handleEscape);
 
     return () => window.removeEventListener("keydown", handleEscape);
-  }, [formData]);
+  }, [handleCancel]);
 
   return (
     <div className="min-h-screen px-4 py-8">

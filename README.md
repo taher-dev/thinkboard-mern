@@ -84,12 +84,15 @@ NODE_ENV=development
    ```
 
 2. **Install Dependencies**
-   From the root directory, run:
+   Install dependencies for both backend and frontend applications:
    ```bash
-   # This installs both frontend and backend dependencies
-   npm run build
+   # Install backend dependencies
+   npm install --prefix backend
+
+   # Install frontend dependencies
+   npm install --prefix frontend
    ```
-   *(Note: The root `build` script in `package.json` handles installing dependencies for both folders and building the frontend)*
+   *(Tip: Running `npm run build` from the root directory will install dependencies for both services and build the frontend for production).*
 
 3. **Start the Development Servers**
    Open two terminal windows:
@@ -106,7 +109,7 @@ NODE_ENV=development
    npm run dev
    ```
 
-   The frontend will typically run on `http://localhost:5173` and the backend on `http://localhost:5001`.
+   The frontend will run on `http://localhost:5173` and the backend on `http://localhost:5001`.
 
 ## 📜 Scripts (Root Directory)
 

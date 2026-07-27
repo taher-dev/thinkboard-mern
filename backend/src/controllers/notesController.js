@@ -33,6 +33,9 @@ export const getNoteById = async (req, res) => {
 
     res.json(note);
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(404).json({ message: "Note not found" });
+    }
     console.log("Error in getNoteById controller ", error);
 
     res.status(500).json({ message: "Internal server error" });
@@ -53,6 +56,9 @@ export const updateNote = async (req, res) => {
 
     res.status(200).json(updatedNote);
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(404).json({ message: "Note not found" });
+    }
     console.log("Error in updateNote controller ", error);
 
     res.status(500).json({ message: "Internal server error" });
@@ -68,8 +74,12 @@ export const deleteNote = async (req, res) => {
 
     res.status(200).json({ message: "Note deleted successfully" });
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(404).json({ message: "Note not found" });
+    }
     console.log("Error in deleteNote controller ", error);
 
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
