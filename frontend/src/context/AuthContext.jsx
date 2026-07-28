@@ -75,16 +75,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async (credential) => {
+  const loginWithGoogle = async (googlePayload) => {
     try {
       setLoading(true);
       // Pass guestUserId if currently signed in as a Guest to trigger note migration
       const guestUserId = user && user.isGuest ? user._id : null;
 
-      const res = await api.post("/auth/google", {
-        credential,
-        guestUserId,
-      });
+      const payload =
+        typeof googlePayload === "object"
+          ? { ...googlePayload, guestUserId }
+          : { credential: googlePayload, guestUserId };
+
+      const res = await api.post("/auth/google", payload);
 
       const { user: userData, token: newToken, mergedNotesCount } = res.data;
 

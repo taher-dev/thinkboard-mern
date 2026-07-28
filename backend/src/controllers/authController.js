@@ -43,34 +43,55 @@ export const guestLogin = async (req, res) => {
 
 export const googleLogin = async (req, res) => {
   try {
-    const { credential, guestUserId } = req.body;
+    const { credential, access_token, guestUserId } = req.body;
 
-    if (!credential) {
-      return res.status(400).json({ message: "Google credential token is required" });
+    if (!credential && !access_token) {
+      return res.status(400).json({ message: "Google credential or access token is required" });
     }
 
     let payload;
 
-    // Verify Google ID token
-    try {
-      const googleClientId = process.env.GOOGLE_CLIENT_ID;
-      if (googleClientId) {
-        const ticket = await client.verifyIdToken({
-          idToken: credential,
-          audience: googleClientId,
+    // 1. Try fetching Google User Info if access_token provided (from useGoogleLogin hook)
+    if (access_token) {
+      try {
+        const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${access_token}` },
         });
-        payload = ticket.getPayload();
-      } else {
-        // Fallback for development/testing when GOOGLE_CLIENT_ID isn't set in backend .env
+        if (userInfoRes.ok) {
+          const info = await userInfoRes.json();
+          payload = {
+            sub: info.sub,
+            email: info.email,
+            name: info.name,
+            picture: info.picture,
+          };
+        }
+      } catch (err) {
+        console.warn("Failed to fetch userinfo from Google access_token:", err.message);
+      }
+    }
+
+    // 2. Try verifying Google ID token if credential provided
+    if (!payload && credential) {
+      try {
+        const googleClientId = process.env.GOOGLE_CLIENT_ID;
+        if (googleClientId) {
+          const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: googleClientId,
+          });
+          payload = ticket.getPayload();
+        } else {
+          payload = jwt.decode(credential);
+        }
+      } catch (verifyErr) {
+        console.warn("Google ID token verification failed with client ID, trying fallback decode:", verifyErr.message);
         payload = jwt.decode(credential);
       }
-    } catch (verifyErr) {
-      console.warn("Google ID token verification failed with client ID, trying fallback decode:", verifyErr.message);
-      payload = jwt.decode(credential);
     }
 
     if (!payload || (!payload.sub && !payload.email)) {
-      return res.status(400).json({ message: "Invalid Google credential token" });
+      return res.status(400).json({ message: "Invalid Google authorization data" });
     }
 
     const { sub: googleId, email, name, picture: avatar } = payload;

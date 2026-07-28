@@ -109,13 +109,16 @@ const Navbar = () => {
 
               <div className="pt-4 flex flex-col items-center justify-center space-y-3">
                 {import.meta.env.VITE_GOOGLE_CLIENT_ID?.includes(".apps.googleusercontent.com") ? (
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => {}}
-                    theme="filled_blue"
-                    shape="pill"
-                    size="large"
-                  />
+                  <div className="w-full flex justify-center items-center min-h-[44px] rounded-full overflow-hidden shadow-sm [&>div]:!w-full [&>div]:flex [&>div]:justify-center">
+                    <GoogleLogin
+                      onSuccess={handleGoogleSuccess}
+                      onError={() => {}}
+                      theme="filled_blue"
+                      shape="pill"
+                      size="large"
+                      width="380"
+                    />
+                  </div>
                 ) : (
                   <button
                     type="button"
