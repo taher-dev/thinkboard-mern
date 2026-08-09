@@ -24,6 +24,7 @@ const LoginPage = () => {
   }
 
   const triggerLiveGoogleLogin = useGoogleLogin({
+    flow: "implicit",
     onSuccess: async (tokenResponse) => {
       try {
         setGoogleLoading(true);
@@ -37,8 +38,29 @@ const LoginPage = () => {
         setGoogleLoading(false);
       }
     },
-    onError: () => {
-      toast.error("Google Sign-In failed or was cancelled.");
+    onError: (errorResponse) => {
+      if (
+        errorResponse?.type === "popup_failed_to_open" ||
+        errorResponse?.type === "popup_closed"
+      ) {
+        toast.error(
+          "Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.",
+          { duration: 5000 },
+        );
+      } else {
+        toast.error("Google Sign-In failed or was cancelled.");
+      }
+      setGoogleLoading(false);
+    },
+    onNonOAuthError: (error) => {
+      if (error?.type === "popup_failed_to_open") {
+        toast.error(
+          "Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.",
+          { duration: 5000 },
+        );
+      } else {
+        toast.error("Google Sign-In failed or was cancelled.");
+      }
       setGoogleLoading(false);
     },
   });

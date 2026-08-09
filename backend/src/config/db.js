@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import dns from "dns";
 
 export const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
+
   try {
     // Set fallback public DNS servers for SRV record resolution on Windows
     try {
@@ -15,7 +19,11 @@ export const connectDB = async () => {
     console.log("MongoDB connected successfully!");
   } catch (error) {
     console.error("Error connecting to mongodb", error);
-    process.exit(1);
+    if (process.env.VERCEL !== "1") {
+      process.exit(1);
+    } else {
+      throw error;
+    }
   }
 };
 

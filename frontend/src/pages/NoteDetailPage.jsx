@@ -4,6 +4,7 @@ import api from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { Loader2, Save, Trash2 } from "lucide-react";
 import NoteEditor from "../components/NoteEditor";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const NoteDetailPage = () => {
   const { id } = useParams();
@@ -22,6 +23,8 @@ const NoteDetailPage = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
   // Fetch the note
   useEffect(() => {
@@ -61,9 +64,8 @@ const NoteDetailPage = () => {
 
   const handleCancel = () => {
     if (hasChanges()) {
-      const confirmLeave = window.confirm("Discard your unsaved changes?");
-
-      if (!confirmLeave) return;
+      setShowDiscardConfirm(true);
+      return;
     }
 
     navigate("/");
@@ -95,9 +97,12 @@ const NoteDetailPage = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    setShowDeleteConfirm(false);
     try {
       setDeleting(true);
 
@@ -128,38 +133,68 @@ const NoteDetailPage = () => {
   }
 
   return (
-    <NoteEditor
-      showHeading={false}
-      formData={formData}
-      setFormData={setFormData}
-      isDirty={hasChanges()}
-      loading={loading}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-      submitText="Save"
-      submitLoadingText="Saving..."
-      submitIcon={Save}
-      headerActions={
-        <button
-          onClick={handleDelete}
-          disabled={deleting}
-          className="btn btn-sm sm:btn-md btn-ghost gap-2 border border-base-content/10 hover:border-error/30 text-base-content/70 hover:bg-error/10 hover:text-error"
-        >
-          {deleting ? (
-            <>
-              <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-              Deleting...
-            </>
-          ) : (
-            <>
-              <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
-              Delete
-            </>
-          )}
-        </button>
-      }
-    />
+    <>
+      <NoteEditor
+        showHeading={false}
+        formData={formData}
+        setFormData={setFormData}
+        isDirty={hasChanges()}
+        loading={loading}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        submitText="Save"
+        submitLoadingText="Saving..."
+        submitIcon={Save}
+        headerActions={
+          <button
+            onClick={handleDeleteClick}
+            disabled={deleting}
+            className="btn btn-sm sm:btn-md btn-ghost gap-2 border border-base-content/10 hover:border-error/30 text-base-content/70 hover:bg-error/10 hover:text-error"
+          >
+            {deleting ? (
+              <>
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                Delete
+              </>
+            )}
+          </button>
+        }
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        title="Delete Note"
+        message="This note will be permanently deleted. This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Keep it"
+        variant="danger"
+      />
+
+      {/* Discard Changes Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDiscardConfirm}
+        onConfirm={() => {
+          setShowDiscardConfirm(false);
+          navigate("/");
+        }}
+        onCancel={() => setShowDiscardConfirm(false)}
+        title="Discard Changes?"
+        message="You have unsaved changes. If you leave now, your edits will be lost."
+        confirmText="Discard"
+        cancelText="Keep editing"
+        variant="warning"
+      />
+    </>
   );
 };
 
 export default NoteDetailPage;
+

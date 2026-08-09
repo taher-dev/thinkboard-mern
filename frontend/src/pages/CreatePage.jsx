@@ -4,11 +4,13 @@ import api from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { Save } from "lucide-react";
 import NoteEditor from "../components/NoteEditor";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const CreatePage = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -19,9 +21,8 @@ const CreatePage = () => {
     const hasUnsavedChanges = formData.title.trim() || formData.content.trim();
 
     if (hasUnsavedChanges) {
-      const confirmLeave = window.confirm("Discard your unsaved changes?");
-
-      if (!confirmLeave) return;
+      setShowDiscardConfirm(true);
+      return;
     }
 
     navigate("/");
@@ -54,22 +55,40 @@ const CreatePage = () => {
   };
 
   return (
-    <NoteEditor
-      title="Create New Note"
-      showHeading={true}
-      formData={formData}
-      setFormData={setFormData}
-      isDirty={Boolean(formData.title.trim() || formData.content.trim())}
-      loading={loading}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-      submitText="Save"
-      submitLoadingText="Saving..."
-      submitIcon={Save}
-    >
-      <p>Capture your thoughts before they disappear.</p>
-    </NoteEditor>
+    <>
+      <NoteEditor
+        title="Create New Note"
+        showHeading={true}
+        formData={formData}
+        setFormData={setFormData}
+        isDirty={Boolean(formData.title.trim() || formData.content.trim())}
+        loading={loading}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        submitText="Save"
+        submitLoadingText="Saving..."
+        submitIcon={Save}
+      >
+        <p>Capture your thoughts before they disappear.</p>
+      </NoteEditor>
+
+      {/* Discard Changes Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDiscardConfirm}
+        onConfirm={() => {
+          setShowDiscardConfirm(false);
+          navigate("/");
+        }}
+        onCancel={() => setShowDiscardConfirm(false)}
+        title="Discard Changes?"
+        message="You have unsaved changes. If you leave now, your note will be lost."
+        confirmText="Discard"
+        cancelText="Keep editing"
+        variant="warning"
+      />
+    </>
   );
 };
 
 export default CreatePage;
+

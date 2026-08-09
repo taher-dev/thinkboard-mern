@@ -12,6 +12,7 @@ const Navbar = () => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const dropdownRef = useRef(null);
 
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -38,6 +39,7 @@ const Navbar = () => {
   };
 
   const triggerLiveGoogleLogin = useGoogleLogin({
+    flow: "implicit",
     onSuccess: async (tokenResponse) => {
       try {
         setGoogleLoading(true);
@@ -51,8 +53,29 @@ const Navbar = () => {
         setGoogleLoading(false);
       }
     },
-    onError: () => {
-      toast.error("Google Sign-In failed or was cancelled.");
+    onError: (errorResponse) => {
+      if (
+        errorResponse?.type === "popup_failed_to_open" ||
+        errorResponse?.type === "popup_closed"
+      ) {
+        toast.error(
+          "Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.",
+          { duration: 5000 },
+        );
+      } else {
+        toast.error("Google Sign-In failed or was cancelled.");
+      }
+      setGoogleLoading(false);
+    },
+    onNonOAuthError: (error) => {
+      if (error?.type === "popup_failed_to_open") {
+        toast.error(
+          "Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.",
+          { duration: 5000 },
+        );
+      } else {
+        toast.error("Google Sign-In failed or was cancelled.");
+      }
       setGoogleLoading(false);
     },
   });
@@ -119,11 +142,12 @@ const Navbar = () => {
                     <div className="w-full h-full rounded-full border border-base-content/15 hover:border-primary/40 transition-colors flex items-center justify-center bg-base-200 overflow-hidden">
                       {user.isGuest ? (
                         <User size={20} className="text-base-content/70 m-auto" />
-                      ) : user.avatar ? (
+                      ) : user.avatar && !avatarError ? (
                         <img
                           src={user.avatar}
                           alt={user.name}
                           className="w-full h-full object-cover rounded-full"
+                          onError={() => setAvatarError(true)}
                         />
                       ) : (
                         <span className="font-bold text-sm text-primary">
@@ -188,11 +212,12 @@ const Navbar = () => {
                         <>
                           <div className="px-3 py-2.5 border-b border-base-content/10 mb-1">
                             <div className="flex items-start gap-2.5">
-                              {user.avatar ? (
+                              {user.avatar && !avatarError ? (
                                 <img
                                   src={user.avatar}
                                   alt={user.name}
                                   className="w-8 h-8 rounded-full object-cover shrink-0 border border-base-content/10 mt-0.5"
+                                  onError={() => setAvatarError(true)}
                                 />
                               ) : (
                                 <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
