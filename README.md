@@ -2,7 +2,7 @@
 
 A modern, full-stack, secure note-taking application built with the MERN stack (MongoDB, Express 5, React 19, Node.js), featuring **Google OAuth 2.0 Single Sign-On**, **Guest Account Mode**, **Automatic Guest-to-Google Note Migration**, and **Strict Per-User Note Isolation**.
 
-**[1. Live Demo](https://test-thinkboard.vercel.app)** (Hosted on Vercel)
+**[1. Live Demo](https://thinkboard-mern-project.vercel.app)** (Hosted on Vercel)
 
 **[2. Live Demo](https://thinkboard-mern-t87j.onrender.com)** (Hosted on Render)
 
@@ -33,6 +33,7 @@ A modern, full-stack, secure note-taking application built with the MERN stack (
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework:** React 19 + Vite 8
 - **Authentication:** `@react-oauth/google`
 - **Styling:** Tailwind CSS (v3) + DaisyUI
@@ -42,6 +43,7 @@ A modern, full-stack, secure note-taking application built with the MERN stack (
 - **Notifications:** React Hot Toast
 
 ### Backend
+
 - **Runtime:** Node.js (v18+)
 - **Framework:** Express.js (v5)
 - **Database:** MongoDB (via Mongoose 9 ORM)
@@ -87,6 +89,7 @@ mern-thinkboard/
 ## ⚙️ Getting Started
 
 ### Prerequisites
+
 - **Node.js**: v18.0.0 or higher
 - **MongoDB**: Local MongoDB instance or MongoDB Atlas Cluster connection string
 - **Google Cloud Console Account**: OAuth 2.0 Client ID setup
@@ -96,6 +99,7 @@ mern-thinkboard/
 ### Environment Setup
 
 #### 1. Backend Environment Variables (`backend/.env`)
+
 Create a `.env` file in the `backend/` directory:
 
 ```env
@@ -112,6 +116,7 @@ NODE_ENV=development
 ```
 
 #### 2. Frontend Environment Variables (`frontend/.env`)
+
 Create a `.env` file in the `frontend/` directory:
 
 ```env
@@ -124,6 +129,7 @@ VITE_API_URL=http://localhost:5001/api
 ### Installation & Running Locally
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/taher-dev/thinkboard-mern.git
    cd mern-thinkboard
@@ -131,10 +137,13 @@ VITE_API_URL=http://localhost:5001/api
 
 2. **Install Dependencies**
    Run from the root directory to install dependencies for both frontend and backend:
+
    ```bash
    npm run build
    ```
-   *Or install individually:*
+
+   _Or install individually:_
+
    ```bash
    npm install --prefix backend
    npm install --prefix frontend
@@ -144,12 +153,14 @@ VITE_API_URL=http://localhost:5001/api
    Open two terminal windows to run both servers concurrently:
 
    **Terminal 1 (Backend Server):**
+
    ```bash
    cd backend
    npm run dev
    ```
 
    **Terminal 2 (Frontend Server):**
+
    ```bash
    cd frontend
    npm run dev
@@ -171,27 +182,28 @@ VITE_API_URL=http://localhost:5001/api
    - `http://localhost:5173`
    - `<your-frontend-url>`
 5. Set your Client ID in `frontend/.env` (`VITE_GOOGLE_CLIENT_ID`) and `backend/.env` (`GOOGLE_CLIENT_ID`).
-6. Set your Client Secret in `backend/.env` (`GOOGLE_CLIENT_SECRET`).
 
 ---
 
 ## 📡 API Endpoints
 
 ### Authentication Routes (`/api/auth`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/guest` | Public | Initializes a temporary guest account |
-| `POST` | `/api/auth/google` | Public | Authenticates Google user & merges existing guest notes |
-| `GET` | `/api/auth/me` | Protected | Fetches currently logged-in user details |
+
+| Method | Endpoint           | Access    | Description                                             |
+| :----- | :----------------- | :-------- | :------------------------------------------------------ |
+| `POST` | `/api/auth/guest`  | Public    | Initializes a temporary guest account                   |
+| `POST` | `/api/auth/google` | Public    | Authenticates Google user & merges existing guest notes |
+| `GET`  | `/api/auth/me`     | Protected | Fetches currently logged-in user details                |
 
 ### Notes Routes (`/api/notes`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/notes` | Protected | Fetches all notes belonging to the logged-in user |
-| `GET` | `/api/notes/:id` | Protected | Fetches a specific note by ID (user ownership enforced) |
-| `POST` | `/api/notes` | Protected | Creates a new note for the logged-in user |
-| `PUT` | `/api/notes/:id` | Protected | Updates an existing note (user ownership enforced) |
-| `DELETE` | `/api/notes/:id` | Protected | Deletes a note (user ownership enforced) |
+
+| Method   | Endpoint         | Access    | Description                                             |
+| :------- | :--------------- | :-------- | :------------------------------------------------------ |
+| `GET`    | `/api/notes`     | Protected | Fetches all notes belonging to the logged-in user       |
+| `GET`    | `/api/notes/:id` | Protected | Fetches a specific note by ID (user ownership enforced) |
+| `POST`   | `/api/notes`     | Protected | Creates a new note for the logged-in user               |
+| `PUT`    | `/api/notes/:id` | Protected | Updates an existing note (user ownership enforced)      |
+| `DELETE` | `/api/notes/:id` | Protected | Deletes a note (user ownership enforced)                |
 
 ---
 
@@ -202,6 +214,7 @@ VITE_API_URL=http://localhost:5001/api
 The project includes pre-configured `vercel.json` files for both frontend and backend deployments on [Vercel](https://vercel.com).
 
 #### 1. Backend API Deployment (Vercel Serverless Function)
+
 1. Import your project repository into Vercel as a new project.
 2. Set **Root Directory** to `backend`.
 3. Framework Preset: **Other** / **Node.js**.
@@ -210,28 +223,28 @@ The project includes pre-configured `vercel.json` files for both frontend and ba
    - `PORT=5001`
    - `JWT_SECRET`
    - `GOOGLE_CLIENT_ID`
-   - `GOOGLE_CLIENT_SECRET`
    - `UPSTASH_REDIS_REST_URL`
    - `UPSTASH_REDIS_REST_TOKEN`
    - `NODE_ENV=production`
    - `CLIENT_URL=<your-frontend-url>`
-   
 5. Deploy backend app and copy the backend URL.
 
 #### 2. Frontend SPA Deployment (Vercel Static Site)
+
 1. Import your project repository into Vercel as a second project (or separate app).
 2. Set **Root Directory** to `frontend`.
 3. Framework Preset: **Vite**.
 4. Configure Build Command: `npm run build` and Output Directory: `dist`.
 5. Configure Environment Variables in Vercel Project Settings:
    - `VITE_GOOGLE_CLIENT_ID`
-   - `VITE_API_URL` (Set to your deployed backend API URL, e.g., `https://test-thinkboard-bpvc.vercel.app/api`)
+   - `VITE_API_URL=<your-backend-url>`
 6. Deploy frontend app and copy the frontend URL.
 7. Paste the frontend URL in the `CLIENT_URL` environment variable of the backend app.
 
 ---
 
 ### Option B: Full-Stack Deployment on Render
+
 1. Create a new **Web Service** on [Render](https://render.com) linked to your GitHub repository.
 2. Configure build settings:
    - **Build Command**: `npm run build`
@@ -248,5 +261,5 @@ The project includes pre-configured `vercel.json` files for both frontend and ba
 ---
 
 ## 📄 License
-This project is open source and available under the [MIT License](LICENSE).
 
+This project is open source and available under the [MIT License](LICENSE).
